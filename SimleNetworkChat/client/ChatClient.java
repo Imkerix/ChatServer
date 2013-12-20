@@ -1,12 +1,13 @@
 package client;
 
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import server.Server;
-import msg.Msg;
+import utility.Msg;
+import utility.StreamTools;
 
 public class ChatClient
 {
@@ -16,6 +17,7 @@ public class ChatClient
 	/** Sends Strings and objects through the socket to the server */
 	private ObjectInputStream in;
 	/** Reads answerers from the Server */
+	private StreamTools st = new StreamTools();
 
 	public ChatClient()
 	{
@@ -25,13 +27,7 @@ public class ChatClient
 		{
 			public void run()
 			{
-				try
-				{
-					out.writeObject(new Msg("It Works!",'r'));
-				} catch (IOException e)
-				{
-					e.printStackTrace();
-				}
+				st.writeMsg(socket, out, "It Works!");
 			}
 		};
 		writeThread.start();
@@ -40,7 +36,7 @@ public class ChatClient
 		{
 			public void run()
 			{
-					Msg nextCMD = (Msg) readMsg();
+					Msg nextCMD = (Msg) st.readMsg(socket,in);
 					while(nextCMD == null){}
 					
 					if (nextCMD.getId() == 'r')
@@ -65,19 +61,17 @@ public class ChatClient
 			e.printStackTrace();
 		}
 	}
-	private Msg readMsg()
+	
+	public void disconnect()
 	{
 		try
 		{
-			if (!socket.isConnected())
-			{
-				return null;
-			}
-			return (Msg) in.readObject();
-		} catch (IOException | ClassNotFoundException e)
+			out.close();
+			in.close();
+			socket.close();
+		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
-		return null;
 	}
 }
