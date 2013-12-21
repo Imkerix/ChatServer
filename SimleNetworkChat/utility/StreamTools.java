@@ -8,7 +8,7 @@ import java.net.Socket;
 public class StreamTools 
 {
 	
-	public boolean writeMsg(Socket socket, ObjectOutputStream out, String p_msg)
+	public boolean writeMsg(Socket socket, ObjectOutputStream out, Msg p_Msg)
 	{
 		try
 		{
@@ -17,7 +17,7 @@ public class StreamTools
 				socket.close();
 				return false;
 			}
-			out.writeObject((new Msg(p_msg,'r')));
+			out.writeObject(p_Msg);
 		} catch (IOException e)
 		{
 			e.printStackTrace();
