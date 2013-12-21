@@ -5,52 +5,58 @@ import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import utility.Msg;
 import utility.StreamTools;
 
-public class ChatClient
+public class RealClient
 {
-	private Socket socket;
+	/** An identifing name of the Person chatting */
+	public String nickname;
 	/** Endpoint on the client machine */
-	private ObjectOutputStream out;
+	private Socket socket;
 	/** Sends Strings and objects through the socket to the server */
-	private ObjectInputStream in;
+	private ObjectOutputStream out;
 	/** Reads answerers from the Server */
+	private ObjectInputStream in;
+	/** Some tools that are used on server and on client, and reuse code this way */
 	private StreamTools st = new StreamTools();
-
-	public ChatClient()
+	
+	public RealClient(String ip, String p_nickname)
 	{
-		connect("127.0.0.1");
-		write();
-		Thread writeThread = new Thread()
-		{
-			public void run()
-			{
-				st.writeMsg(socket, out, new Msg("It works!", 'r'));
-			}
-		};
-		writeThread.start();
+		this.nickname = p_nickname;
+		connect(ip);
 		
 		Thread readThread = new Thread()
 		{
 			public void run()
 			{
+				while(true)
+				{
 					Msg nextCMD = (Msg) st.readMsg(socket,in);
-					while(nextCMD == null){}
-					
-					if (nextCMD.getId() == 'r')
+					if (nextCMD.getId() == 'b' || nextCMD.getId() == 's' || nextCMD.getId() == 'a')
 					{
 						System.out.println(nextCMD.getContent()+" I am a Client");
 					}
+					if (nextCMD.getId() == 'o')
+					{
+						@SuppressWarnings("unchecked")
+						ArrayList<String> alo = (ArrayList<String>) nextCMD.getObject();
+						for (String s : alo) 
+						{
+							System.out.println(s);
+						}
+					}
+				}
 			}
 		};
 		readThread.start();
 	}
-
-	private void write() {
-		// TODO Auto-generated method stub
-		
+	
+	public void write(String s, char p_id)
+	{
+		st.writeMsg(socket, out, new Msg(s, p_id,null));
 	}
 
 	public void connect(String ip)
@@ -58,9 +64,9 @@ public class ChatClient
 		try
 		{
 			socket = new Socket(ip, 12345);
-
 			out = new ObjectOutputStream(socket.getOutputStream());
 			in = new ObjectInputStream(socket.getInputStream());
+			st.writeMsg(socket, out, new Msg(nickname, '#', null));
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -71,7 +77,7 @@ public class ChatClient
 	{
 		try
 		{
-			st.writeMsg(socket, out, new Msg("", ';'));
+			st.writeMsg(socket, out, new Msg("", ';',null));
 			socket.close();
 		} catch (IOException e)
 		{
