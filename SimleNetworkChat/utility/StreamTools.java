@@ -33,11 +33,14 @@ public class StreamTools
 			{
 				return null;
 			}
-			return (Msg) in.readObject();
+			Msg msg = (Msg) in.readObject();
+			while(msg == null){}
+			return msg;
 		} catch (IOException | ClassNotFoundException e)
 		{
 			e.printStackTrace();
 		}
 		return null;
 	}
+	
 }
