@@ -22,12 +22,12 @@ public class ChatClient
 	public ChatClient()
 	{
 		connect("127.0.0.1");
-		
+		write();
 		Thread writeThread = new Thread()
 		{
 			public void run()
 			{
-				st.writeMsg(socket, out, "It Works!");
+				st.writeMsg(socket, out, new Msg("It works!", 'r'));
 			}
 		};
 		writeThread.start();
@@ -41,11 +41,16 @@ public class ChatClient
 					
 					if (nextCMD.getId() == 'r')
 					{
-						System.err.println(nextCMD.getContent());
+						System.out.println(nextCMD.getContent()+" I am a Client");
 					}
 			}
 		};
 		readThread.start();
+	}
+
+	private void write() {
+		// TODO Auto-generated method stub
+		
 	}
 
 	public void connect(String ip)
@@ -66,8 +71,7 @@ public class ChatClient
 	{
 		try
 		{
-			out.close();
-			in.close();
+			st.writeMsg(socket, out, new Msg("", ';'));
 			socket.close();
 		} catch (IOException e)
 		{
