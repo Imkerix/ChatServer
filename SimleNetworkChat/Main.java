@@ -6,8 +6,9 @@ import java.util.Scanner;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 
-import client.ChatClient;
+import client.RealClient;
 import server.Server;
+import utility.Msg;
  
 public class Main
 {
@@ -54,50 +55,60 @@ public class Main
 //		 "10.34.12.85");
 		// // Small GUI to ask for IP //// Small GUI to ask for IP ////
 
-//		Thread clientThread0 = new Thread() // A Client Thread
-//		{
-//			public void run()
-//			{
-//				ChatClient c = new ChatClient();
-//			}
-//		};
-//		clientThread0.start();
-//		Thread clientThread1 = new Thread() // A Client Thread
-//		{
-//			public void run()
-//			{
-//				ChatClient c = new ChatClient();
-//			}
-//		};
-//		clientThread1.start();
-//		Thread clientThread2 = new Thread() // A Client Thread
-//		{
-//			public void run()
-//			{
-//				ChatClient c = new ChatClient();
-//			}
-//		};
-//		clientThread2.start();
-//
-//		Thread clientThread3 = new Thread() // A Client Thread
-//		{
-//			public void run()
-//			{
-//				ChatClient c = new ChatClient();
-//			}
-//		};
-//		clientThread3.start();
-//
-//		Thread clientThread4 = new Thread() // A Client Thread
-//		{
-//			public void run()
-//			{
-//				ChatClient c = new ChatClient(){
-//					
-//				};
-//			}
-//		};
-//		clientThread4.start();
+		Thread clientThread0 = new Thread() // A Client Thread
+		{
+			public void run()
+			{
+				RealClient c = new RealClient(ip,"nickname_0");
+				c.write(" client0",'b');
+			}
+		};
+		clientThread0.start();
+		Thread clientThread1 = new Thread() // A Client Thread
+		{
+			public void run()
+			{
+				RealClient c = new RealClient(ip,"nickname_1");
+				c.write(" client1",'b');
+			}
+		};
+		clientThread1.start();
+		Thread clientThread2 = new Thread() // A Client Thread
+		{
+			public void run()
+			{
+				RealClient c = new RealClient(ip,"nickname_2");
+				c.write(" client2",'b');
+			}
+		};
+		clientThread2.start();
+
+		Thread clientThread3 = new Thread() // A Client Thread
+		{
+			public void run()
+			{
+				RealClient c = new RealClient(ip,"nickname_3");
+				c.write(" client3",'b');
+			}
+		};
+		clientThread3.start();
+
+		Thread clientThread4 = new Thread() // A Client Thread
+		{
+			public void run()
+			{
+				RealClient c = new RealClient(ip,"nickname_4");
+				try {
+					this.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				c.write(" client4",'?');
+				
+			}
+		};
+		clientThread4.start();
 
 		// // Client Part //////// Client Part //////// Client Part ////////
 		// Client Part ////
