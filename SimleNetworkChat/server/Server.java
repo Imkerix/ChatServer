@@ -6,67 +6,71 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 
 import utility.Msg;
-import utility.SocketThread;
-import utility.StreamTools;
 
 public class Server
 {
 	private ServerSocket serversocket = null; /** Endpoint on the Server */
-	StreamTools st = new StreamTools();
+	private ArrayList<SocketThread> connectedClients = new ArrayList<SocketThread>();
+	
 
 	public Server(int port) throws IOException
 	{
 		serversocket = new ServerSocket(port);
 		while (true)
 		{
-			Socket clientserver = serversocket.accept();
-				new SocketThread(clientserver)
+			SocketThread thread = new SocketThread(serversocket.accept())
 				{
 					@Override
 					public void run()
 					{
 						try
 						{
-							ObjectOutputStream out = new ObjectOutputStream(clientsocket.getOutputStream());
-							ObjectInputStream in = new ObjectInputStream(clientsocket.getInputStream());
-							st.writeMsg(clientsocket,out,"lolotrolololotrolo");
-							protokol(clientsocket,out,in);
+							protokol(clientsocket,out,in,this); // this is a SocketThread
 						} catch (IOException e)
 						{
 							e.printStackTrace();
 						}
 					}
-				}.start();
+				};
+			connectedClients.add(thread);
+			thread.start();
 		}
 	}
 
-	private void protokol(Socket clientsocket, ObjectOutputStream out,ObjectInputStream in) throws IOException
+	private void protokol(Socket clientsocket, ObjectOutputStream out,ObjectInputStream in, SocketThread activethread) throws IOException
 	{
 		boolean shutdown = false;
 		/** Determinates if the Client wants to disconnect */
 
 		while (shutdown == false)
 		{
-			Msg nextCMD = st.readMsg(clientsocket,in);
+			Msg nextCMD = activethread.st.readMsg(clientsocket,in);
 			while(nextCMD == null){}
 			
 			if (nextCMD.getId() == 'r')
 			{
-				System.err.println(nextCMD.getContent());
+				broadcast(clientsocket, out, activethread, nextCMD);
 			}
 			if(nextCMD.getId() == ';')
 			{
-				out.writeChar('+');
-				in.close();
-				out.close();
 				clientsocket.close();
 				shutdown = true;
+				connectedClients.remove(activethread);
+				System.out.println("is down");
 			}
 		}
 	}
-    
-	
+	public synchronized void broadcast(Socket clientsocket, ObjectOutputStream out, SocketThread activethread, Msg p_msg)
+	{
+		for (SocketThread soth : connectedClients) // removes Thread from list of all connected clients
+		{
+			soth.st.writeMsg(soth.clientsocket, soth.out, p_msg);
+		}
+		
+		System.err.println(p_msg.getContent()+" I am the Server");
+	}
 	
 }
