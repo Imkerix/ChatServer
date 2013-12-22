@@ -13,7 +13,7 @@ import utility.StreamTools;
 public class RealClient
 {
 	/** An identifing name of the Person chatting */
-	public String nickname;
+	private String nickname;
 	/** Endpoint on the client machine */
 	private Socket socket;
 	/** Sends Strings and objects through the socket to the server */
@@ -22,6 +22,10 @@ public class RealClient
 	private ObjectInputStream in;
 	/** Some tools that are used on server and on client, and reuse code this way */
 	private StreamTools st = new StreamTools();
+	private boolean shutdown;
+	private ArrayList<String> otherClients;
+	private ArrayList<String> otherRooms;
+	
 	
 	public RealClient(String ip, String p_nickname)
 	{
@@ -30,20 +34,32 @@ public class RealClient
 		
 		Thread readThread = new Thread()
 		{
+
 			public void run()
 			{
-				while(true)
+				while(!shutdown)
 				{
 					Msg nextCMD = (Msg) st.readMsg(socket,in);
-					if (nextCMD.getId() == 'b' || nextCMD.getId() == 's' || nextCMD.getId() == 'a')
+					if (nextCMD.getId() == 'r' || nextCMD.getId() == 'b' || nextCMD.getId() == 's')
 					{
-						System.out.println(nextCMD.getContent()+" I am a Client");
+						System.out.println(nextCMD.getContent()+" "+nextCMD.getId()+" "+nickname);
 					}
-					if (nextCMD.getId() == 'o')
+					if (nextCMD.getId() == 'i')
 					{
-						@SuppressWarnings("unchecked")
-						ArrayList<String> alo = (ArrayList<String>) nextCMD.getObject();
-						for (String s : alo) 
+						System.err.println(nextCMD.getContent()+" "+nextCMD.getId()+" "+nickname);
+					}
+					if (nextCMD.getId() == 'C')
+					{
+//						otherClients = (ArrayList<String>) nextCMD.getObject();
+						for(String s : (ArrayList<String>) nextCMD.getObject())
+						{
+							System.out.println(s);
+						}
+					}
+					if (nextCMD.getId() == 'R')
+					{
+//						otherRooms = (ArrayList<String>) nextCMD.getObject();
+						for(String s : (ArrayList<String>) nextCMD.getObject())
 						{
 							System.out.println(s);
 						}
@@ -54,11 +70,51 @@ public class RealClient
 		readThread.start();
 	}
 	
-	public void write(String s, char p_id)
+	public void broadcast(String s,Object o)
 	{
-		st.writeMsg(socket, out, new Msg(s, p_id,null));
+		st.writeMsg(socket, out, new Msg(s,nickname, 'b',o));
 	}
-
+	
+	public void roomBroadcast(String s,Object o)
+	{
+		st.writeMsg(socket, out, new Msg(s,nickname, 'r',o));
+	}
+	
+	public void leaveRoom()
+	{
+		st.writeMsg(socket, out, new Msg("",nickname, '-',null));
+	}
+	
+	public void enterRoom(String s,Object o)
+	{
+		st.writeMsg(socket, out, new Msg(s,nickname, '+',o));
+	}
+	
+	public void secredMessage(String s, String o)
+	{
+		st.writeMsg(socket, out, new Msg(s,nickname, 's',o));
+	}
+	
+	public void updateUserList()
+	{
+		st.writeMsg(socket, out, new Msg("",nickname, 'C',null));
+	}
+	
+	public ArrayList<String> getOtherClients()
+	{
+		return otherClients;
+	}
+	
+	public void updateRoomList()
+	{
+		st.writeMsg(socket, out, new Msg("",nickname, 'R',null));
+	}	
+	
+	public ArrayList<String> getOtherRooms()
+	{
+		return otherRooms;
+	}
+	
 	public void connect(String ip)
 	{
 		try
@@ -66,7 +122,7 @@ public class RealClient
 			socket = new Socket(ip, 12345);
 			out = new ObjectOutputStream(socket.getOutputStream());
 			in = new ObjectInputStream(socket.getInputStream());
-			st.writeMsg(socket, out, new Msg(nickname, '#', null));
+			st.writeMsg(socket, out, new Msg(nickname,nickname, '#', null));
 		} catch (IOException e)
 		{
 			e.printStackTrace();
@@ -75,13 +131,8 @@ public class RealClient
 	
 	public void disconnect()
 	{
-		try
-		{
-			st.writeMsg(socket, out, new Msg("", ';',null));
-			socket.close();
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
+		shutdown = true;
+		st.writeMsg(socket, out, new Msg("",nickname, ';',null));
 	}
+	
 }
