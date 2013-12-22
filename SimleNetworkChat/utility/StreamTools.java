@@ -5,6 +5,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
+import server.ServerClient;
+
 public class StreamTools 
 {
 	
@@ -43,4 +45,13 @@ public class StreamTools
 		return null;
 	}
 	
+	public void disconnect(ServerClient activeClient)
+	{
+		try {
+			activeClient.getClientsocket().close();;
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
+	}
 }
