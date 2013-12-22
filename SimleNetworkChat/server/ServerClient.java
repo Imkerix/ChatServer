@@ -9,10 +9,10 @@ import utility.StreamTools;
 
 public class ServerClient extends Thread 
 {
-	public String nickname;
-	public Socket clientsocket;
-	public ObjectOutputStream out;
-	public ObjectInputStream in;
+	private String nickname;
+	private Socket clientsocket;
+	private ObjectOutputStream out;
+	private ObjectInputStream in;
 	
 	StreamTools st = new StreamTools();
 	
@@ -29,5 +29,30 @@ public class ServerClient extends Thread
 			e.printStackTrace();
 		}
 		this.nickname = st.readMsg(clientsocket, in).getContent();
+	}
+	
+	public String getNickname()
+	{
+		return nickname;
+	}
+
+	public Socket getClientsocket()
+	{
+		return clientsocket;
+	}
+
+	public ObjectOutputStream getOut()
+	{
+		return out;
+	}
+
+	public ObjectInputStream getIn()
+	{
+		return in;
+	}
+
+	public StreamTools getSt()
+	{
+		return st;
 	}
 }
