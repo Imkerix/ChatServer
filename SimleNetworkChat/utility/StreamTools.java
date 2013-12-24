@@ -5,11 +5,9 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 
-import server.ServerClient;
-
-public class StreamTools 
+public class StreamTools
 {
-	
+
 	public boolean writeMsg(Socket socket, ObjectOutputStream out, Msg p_Msg)
 	{
 		try
@@ -36,7 +34,9 @@ public class StreamTools
 				return null;
 			}
 			Msg msg = (Msg) in.readObject();
-			while(msg == null){}
+			while (msg == null)
+			{
+			}
 			return msg;
 		} catch (IOException | ClassNotFoundException e)
 		{
@@ -44,5 +44,5 @@ public class StreamTools
 		}
 		return null;
 	}
-	
+
 }
