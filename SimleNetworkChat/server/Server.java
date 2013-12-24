@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 import utility.Msg;
@@ -182,10 +183,15 @@ public class Server
 	/** 'R' */
 	private void sendExistingRooms(ServerClient activeclient)
 	{
-		ArrayList<String> existingRooms = new ArrayList<String>(); 
+		HashMap<String,ArrayList<String>> existingRooms = new HashMap<String,ArrayList<String>>();
 		for (Room r : rooms)
 		{
-			existingRooms.add(r.getName());
+			ArrayList<String> users = new ArrayList<String>();
+			for(ServerClient sc : r.getClientsInRoom())
+			{
+				users.add(sc.getNickname());
+			}
+			existingRooms.put(r.getName(),users);
 		}
 		try
 		{
