@@ -14,7 +14,7 @@ public class ServerClient extends Thread
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
 	
-	StreamTools st = new StreamTools();
+	private StreamTools st = new StreamTools();
 	
 	public ServerClient(Socket p_socket)
 	{
