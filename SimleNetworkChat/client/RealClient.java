@@ -1,6 +1,5 @@
 package client;
 
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -21,34 +20,49 @@ public class RealClient
 	private ObjectOutputStream out;
 	/** Reads answerers from the Server */
 	private ObjectInputStream in;
-	/** Some tools that are used on server and on client, and reuse code this way */
+	/**
+	 * Some tools that are used on server and on client, and reuse code this way
+	 */
 	private StreamTools st = new StreamTools();
 	private boolean shutdown;
 	private ArrayList<String> otherClients;
-	private HashMap<String,ArrayList<String>> otherRooms;
-	
-	
+	private HashMap<String, ArrayList<String>> otherRooms;
+	private MessageGUI msgGUI;
+
 	public RealClient(String ip, String p_nickname)
 	{
 		this.nickname = p_nickname;
+		msgGUI = new MessageGUI(nickname, 480, 500);
 		connect(ip);
-		
+
 		Thread readThread = new Thread()
 		{
 
 			@SuppressWarnings("unchecked")
 			public void run()
 			{
-				while(!shutdown)
+				while (!shutdown)
 				{
-					Msg nextCMD = (Msg) st.readMsg(socket,in);
-					if (nextCMD.getId() == 'r' || nextCMD.getId() == 'b' || nextCMD.getId() == 's')
+					Msg nextCMD = (Msg) st.readMsg(socket, in);
+					if (nextCMD.getId() == 'r')
 					{
-						System.out.println(nextCMD.getContent()+" "+nextCMD.getId()+" "+nickname);
+						msgGUI.getRoomtabpanel().addMessage(nextCMD);
+						System.out.println(nextCMD.getContent() + " " + nextCMD.getId() + " " + nickname);
+					}
+					if (nextCMD.getId() == 'b')
+					{
+						msgGUI.getBroadcasttabpanel().addMessage(nextCMD);
+						System.out.println(nextCMD.getContent() + " " + nextCMD.getId() + " " + nickname);
+					}
+					if (nextCMD.getId() == 's')
+					{
+						msgGUI.getPrivatetabpanel().addMessage(nextCMD);
+						System.out.println(nextCMD.getContent() + " " + nextCMD.getId() + " " + nickname);
 					}
 					if (nextCMD.getId() == 'i')
 					{
-						System.err.println(nextCMD.getContent()+" "+nextCMD.getId()+" "+nickname);
+						msgGUI.getRoomtabpanel().addSystemMessage(nextCMD);
+						System.err.println(nextCMD.getContent() + " " + nextCMD.getId() + " " + nickname);
 					}
 					if (nextCMD.getId() == 'C')
 					{
@@ -56,7 +70,7 @@ public class RealClient
 					}
 					if (nextCMD.getId() == 'R')
 					{
-						otherRooms = (HashMap<String,ArrayList<String>>) nextCMD.getObject();
+						otherRooms = (HashMap<String, ArrayList<String>>) nextCMD.getObject();
 					}
 					if (nextCMD.getId() == ';')
 					{
@@ -67,53 +81,57 @@ public class RealClient
 		};
 		readThread.start();
 	}
-	public void broadcast(String s,Object o)
+
+	public void broadcast(String s, Object o)
 	{
-		st.writeMsg(socket, out, new Msg(s,nickname, 'b',o));
+		st.writeMsg(socket, out, new Msg(s, nickname, 'b', o));
 	}
-	
-	public void roomBroadcast(String s,Object o)
+
+	public void roomBroadcast(String s, Object o)
 	{
-		st.writeMsg(socket, out, new Msg(s,nickname, 'r',o));
+		st.writeMsg(socket, out, new Msg(s, nickname, 'r', o));
 	}
-	
+
 	public void leaveRoom()
 	{
-		st.writeMsg(socket, out, new Msg("",nickname, '-',null));
+		st.writeMsg(socket, out, new Msg("", nickname, '-', null));
 	}
-	
-	public void enterRoom(String s,Object o)
+
+	public void enterRoom(String s, Object o)
 	{
-		st.writeMsg(socket, out, new Msg(s,nickname, '+',o));
+		st.writeMsg(socket, out, new Msg(s, nickname, '+', o));
 	}
-	
+
 	public void secredMessage(String s, String o)
 	{
-		st.writeMsg(socket, out, new Msg(s,nickname, 's',o));
+		st.writeMsg(socket, out, new Msg(s, nickname, 's', o));
 	}
-	
+
 	public void updateUserList()
 	{
-		st.writeMsg(socket, out, new Msg("",nickname, 'C',null));
+		st.writeMsg(socket, out, new Msg("", nickname, 'C', null));
 	}
-	
+
 	public ArrayList<String> getOtherClients()
 	{
 		return otherClients;
 	}
-	
+
 	public void updateRoomList()
 	{
-		st.writeMsg(socket, out, new Msg("",nickname, 'R',null));
-	}	
-	public HashMap<String,ArrayList<String>> getOtherRooms()
+		st.writeMsg(socket, out, new Msg("", nickname, 'R', null));
+	}
+
+	public HashMap<String, ArrayList<String>> getOtherRooms()
 	{
 		return otherRooms;
 	}
+
 	public String getNickname()
 	{
 		return nickname;
 	}
+
 	public void connect(String ip)
 	{
 		try
@@ -121,16 +139,16 @@ public class RealClient
 			socket = new Socket(ip, 12345);
 			out = new ObjectOutputStream(socket.getOutputStream());
 			in = new ObjectInputStream(socket.getInputStream());
-			st.writeMsg(socket, out, new Msg(nickname,nickname, '#', null));
+			st.writeMsg(socket, out, new Msg(nickname, nickname, '#', null));
 		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 	}
-	
+
 	public void disconnect()
 	{
-		st.writeMsg(socket, out, new Msg("",nickname, ';',null));
+		st.writeMsg(socket, out, new Msg("", nickname, ';', null));
 	}
-	
+
 }
