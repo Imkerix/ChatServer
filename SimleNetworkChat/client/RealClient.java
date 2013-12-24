@@ -58,6 +58,10 @@ public class RealClient
 					{
 						otherRooms = (HashMap<String,ArrayList<String>>) nextCMD.getObject();
 					}
+					if (nextCMD.getId() == ';')
+					{
+						shutdown = true;
+					}
 				}
 			}
 		};
@@ -126,7 +130,6 @@ public class RealClient
 	
 	public void disconnect()
 	{
-		shutdown = true;
 		st.writeMsg(socket, out, new Msg("",nickname, ';',null));
 	}
 	
