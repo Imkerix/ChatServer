@@ -45,13 +45,4 @@ public class StreamTools
 		return null;
 	}
 	
-	public void disconnect(ServerClient activeClient)
-	{
-		try {
-			activeClient.getClientsocket().close();;
-		} catch (IOException e)
-		{
-			e.printStackTrace();
-		}
-	}
 }
