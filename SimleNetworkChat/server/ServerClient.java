@@ -7,30 +7,30 @@ import java.net.Socket;
 
 import utility.StreamTools;
 
-public class ServerClient extends Thread 
+public class ServerClient extends Thread
 {
 	private String nickname;
 	private Socket clientsocket;
 	private ObjectOutputStream out;
 	private ObjectInputStream in;
-	
+
 	private StreamTools st = new StreamTools();
-	
+
 	public ServerClient(Socket p_socket)
 	{
 		this.clientsocket = p_socket;
-		
-		try 
+
+		try
 		{
 			out = new ObjectOutputStream(clientsocket.getOutputStream());
 			in = new ObjectInputStream(clientsocket.getInputStream());
-		} catch (IOException e) 
+		} catch (IOException e)
 		{
 			e.printStackTrace();
 		}
 		this.nickname = st.readMsg(clientsocket, in).getContent();
 	}
-	
+
 	public String getNickname()
 	{
 		return nickname;
