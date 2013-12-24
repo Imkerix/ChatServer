@@ -1,14 +1,10 @@
 
 
 import java.io.IOException;
-import java.util.Scanner;
 
-import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
-import client.RealClient;
 import server.Server;
-import utility.Msg;
+import client.RealClient;
+import client.RealClientGUI;
  
 public class Main
 {
@@ -35,7 +31,7 @@ public class Main
 		serverThread.start();
 		// // Server Part //////// Server Part //////// Server Part ////////
 		// Server Part ////
-		Thread.sleep(500);
+//		Thread.sleep(500);
 		// // Client Part //////// Client Part //////// Client Part ////////
 		// Client Part ////
 
@@ -55,6 +51,10 @@ public class Main
 //		 "10.34.12.85");
 		// // Small GUI to ask for IP //// Small GUI to ask for IP ////
 
+		RealClientGUI rcGUI = new RealClientGUI();
+		
+		
+		
 		Thread clientThread0 = new Thread() // A Client Thread
 		{
 			public void run()
@@ -74,7 +74,7 @@ public class Main
 //					e.printStackTrace();
 //				}
 //				c.roomBroadcast("Da waren es noch 3", null);
-				
+//				
 			}
 		};
 		clientThread0.start();
@@ -122,24 +122,13 @@ public class Main
 			}
 		};
 		clientThread2.start();
-
+//
 		Thread clientThread3 = new Thread() // A Client Thread
 		{
 			public void run()
 			{
 				RealClient c = new RealClient(ip,"nickname_3");
-				c.updateRoomList();
-//				try {
-//					this.sleep(4000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-				
-//				for(String s : c.getOtherRooms())
-//				{
-//					System.out.println(s);
-//				}
+//				c.updateRoomList();
 			}
 		};
 		clientThread3.start();
