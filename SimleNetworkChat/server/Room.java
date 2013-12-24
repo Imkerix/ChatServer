@@ -20,7 +20,7 @@ public class Room
 		{
 			if(sc != activeclient)  // dont ask active client for its name he knows that already ^^
 			{
-				sc.st.writeMsg(sc.getClientsocket(), sc.getOut(), p_msg);
+				sc.getSt().writeMsg(sc.getClientsocket(), sc.getOut(), p_msg);
 			}	
 		}
 	}
@@ -30,23 +30,21 @@ public class Room
 		
 		for(ServerClient c : clientsInRoom) // nachricht an alle anderen im Raum, neuer typ da
 		{
-			c.st.writeMsg(c.getClientsocket(), c.getOut(), new Msg(sc.getNickname()+" entered...", name, 'i', null));
+			c.getSt().writeMsg(c.getClientsocket(), c.getOut(), new Msg(sc.getNickname()+" entered...", name, 'i', null));
 		}
 		clientsInRoom.add(sc);
 	}
 	
-	public boolean rmClientFromRoom(ServerClient sc)
+	public void rmClientFromRoom(ServerClient sc)
 	{
 		if(clientsInRoom.contains(sc)) // gibt es den Typ
 		{
 			clientsInRoom.remove(sc);
 			for(ServerClient c : clientsInRoom) // nachricht an alle anderen im Raum, typ weg
 			{
-				c.st.writeMsg(c.getClientsocket(), c.getOut(), new Msg(sc.getNickname()+" left...", name, 'i', null));
-				return true;
+				c.getSt().writeMsg(c.getClientsocket(), c.getOut(), new Msg(sc.getNickname()+" left...", name, 'i', null));
 			}
 		}
-		return false;
 	}
 
 	public String getName()
