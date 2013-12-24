@@ -1,5 +1,7 @@
 
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 
 import server.Server;
@@ -8,7 +10,6 @@ import client.RealClientGUI;
  
 public class Main
 {
-
 	public static void main(String[] args) throws InterruptedException
 	{
 
@@ -51,6 +52,8 @@ public class Main
 //		 "10.34.12.85");
 		// // Small GUI to ask for IP //// Small GUI to ask for IP ////
 
+		
+		
 		RealClientGUI rcGUI = new RealClientGUI();
 		
 		
@@ -60,20 +63,20 @@ public class Main
 			public void run()
 			{
 				RealClient c = new RealClient(ip,"nickname_0");
-//				try {
-//					this.sleep(2000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				c.roomBroadcast("Alle im raum ?", null);
-//				try {
-//					this.sleep(3000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				c.roomBroadcast("Da waren es noch 3", null);
+				try {
+					this.sleep(5000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				c.roomBroadcast("Alle im raum ?", null);
+				try {
+					this.sleep(3000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				c.roomBroadcast("Da waren es noch 3", null);
 //				
 			}
 		};
@@ -83,20 +86,20 @@ public class Main
 			public void run()
 			{
 				RealClient c = new RealClient(ip,"nickname_1");
-//				try {
-//					this.sleep(4000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				c.leaveRoom();
-//				try {
-//					this.sleep(2000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				c.enterRoom("Redeecke", null);
+				try {
+					this.sleep(4000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				c.leaveRoom();
+				try {
+					this.sleep(2000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				c.enterRoom("Redeecke", null);
 			}
 		};
 		clientThread1.start();
@@ -105,20 +108,20 @@ public class Main
 			public void run()
 			{
 				RealClient c = new RealClient(ip,"nickname_2");
-//				try {
-//					this.sleep(7000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
+				try {
+					this.sleep(7000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				c.enterRoom("Redeecke", null);
-//				try {
-//					this.sleep(1000);
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				c.roomBroadcast("nur wir zwei ^^", null);
+				try {
+					this.sleep(1000);
+				} catch (InterruptedException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+				c.roomBroadcast("nur wir zwei ^^", null);
 			}
 		};
 		clientThread2.start();
