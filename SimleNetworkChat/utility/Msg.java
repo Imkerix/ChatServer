@@ -1,6 +1,5 @@
 package utility;
 
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -25,7 +24,7 @@ public class Msg implements Serializable
 	{
 		return content;
 	}
-	
+
 	public String getSender()
 	{
 		return sender;
@@ -40,10 +39,10 @@ public class Msg implements Serializable
 	{
 		return date;
 	}
-	
+
 	public Object getObject()
 	{
 		return object;
 	}
-	
+
 }
