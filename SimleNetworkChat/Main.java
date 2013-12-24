@@ -111,7 +111,7 @@ public class Main
 //					// TODO Auto-generated catch block
 //					e.printStackTrace();
 //				}
-//				c.enterRoom("Redeecke", null);
+				c.enterRoom("Redeecke", null);
 //				try {
 //					this.sleep(1000);
 //				} catch (InterruptedException e) {
@@ -138,7 +138,7 @@ public class Main
 			public void run()
 			{
 				RealClient c = new RealClient(ip,"nickname_4");
-				
+				c.enterRoom("Redeecke", null);
 			}
 		};
 		clientThread4.start();
