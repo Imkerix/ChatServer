@@ -6,6 +6,7 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import utility.Msg;
 import utility.StreamTools;
@@ -24,7 +25,7 @@ public class RealClient
 	private StreamTools st = new StreamTools();
 	private boolean shutdown;
 	private ArrayList<String> otherClients;
-	private ArrayList<String> otherRooms;
+	private HashMap<String,ArrayList<String>> otherRooms;
 	
 	
 	public RealClient(String ip, String p_nickname)
@@ -35,6 +36,7 @@ public class RealClient
 		Thread readThread = new Thread()
 		{
 
+			@SuppressWarnings("unchecked")
 			public void run()
 			{
 				while(!shutdown)
@@ -50,26 +52,17 @@ public class RealClient
 					}
 					if (nextCMD.getId() == 'C')
 					{
-//						otherClients = (ArrayList<String>) nextCMD.getObject();
-						for(String s : (ArrayList<String>) nextCMD.getObject())
-						{
-							System.out.println(s);
-						}
+						otherClients = (ArrayList<String>) nextCMD.getObject();
 					}
 					if (nextCMD.getId() == 'R')
 					{
-//						otherRooms = (ArrayList<String>) nextCMD.getObject();
-						for(String s : (ArrayList<String>) nextCMD.getObject())
-						{
-							System.out.println(s);
-						}
+						otherRooms = (HashMap<String,ArrayList<String>>) nextCMD.getObject();
 					}
 				}
 			}
 		};
 		readThread.start();
 	}
-	
 	public void broadcast(String s,Object o)
 	{
 		st.writeMsg(socket, out, new Msg(s,nickname, 'b',o));
@@ -109,12 +102,14 @@ public class RealClient
 	{
 		st.writeMsg(socket, out, new Msg("",nickname, 'R',null));
 	}	
-	
-	public ArrayList<String> getOtherRooms()
+	public HashMap<String,ArrayList<String>> getOtherRooms()
 	{
 		return otherRooms;
 	}
-	
+	public String getNickname()
+	{
+		return nickname;
+	}
 	public void connect(String ip)
 	{
 		try
