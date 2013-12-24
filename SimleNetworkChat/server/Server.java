@@ -55,7 +55,7 @@ public class Server
 		/** Determinates if the Client wants to disconnect */
 		while (!shutdown)
 		{
-			Msg nextCMD = activeclient.st.readMsg(activeclient.getClientsocket(), activeclient.getIn());
+			Msg nextCMD = activeclient.getSt().readMsg(activeclient.getClientsocket(), activeclient.getIn());
 			if(nextCMD.getId() == 'b')		//// Broadcast message to everybody on the server
 			{
 				broadcast(activeclient, nextCMD);
@@ -87,21 +87,19 @@ public class Server
 			if(nextCMD.getId() == ';')		//// Closes a Connection
 			{
 				shutdown = true;
+				disconnect(activeclient);
 			}
 		}
-		connectedClients.remove(activeclient);
-		activeclient.st.disconnect(activeclient);
-		System.out.println("is down");
 	}
 	
 	/** 'b' */
 	private void broadcast(ServerClient activeclient, Msg p_msg)
 	{
-		for (ServerClient sc : connectedClients) // removes Thread from list of all connected clients
+		for (ServerClient sc : connectedClients) 
 		{
 			if(sc != activeclient)  // dont ask active client for its name he knows that already ^^
 			{
-				sc.st.writeMsg(sc.getClientsocket(), sc.getOut(), p_msg);
+				sc.getSt().writeMsg(sc.getClientsocket(), sc.getOut(), p_msg);
 			}	
 		}
 		System.err.println(p_msg.getContent()+" I am the Server");
@@ -110,11 +108,11 @@ public class Server
 	/** 's' */
 	private void secredMessage(ServerClient activeclient, Msg nextCMD)
 	{
-		for (ServerClient soth : connectedClients) // removes Thread from list of all connected clients
+		for (ServerClient soth : connectedClients) 
 		{
 			if(soth.getNickname().equals((String)nextCMD.getObject()))
 			{
-				soth.st.writeMsg(soth.getClientsocket(), soth.getOut(), new Msg((String)nextCMD.getContent() ,activeclient.getNickname(), 's', null));
+				soth.getSt().writeMsg(soth.getClientsocket(), soth.getOut(), new Msg((String)nextCMD.getContent() ,activeclient.getNickname(), 's', null));
 			}
 		}
 	}
@@ -152,9 +150,9 @@ public class Server
 	{
 		for(Room r : rooms)
 		{
-			if(r.getClientsInRoom().contains(activeclient)) // In which room is the thread who wants to roombroadcast ?
+			if(r.getClientsInRoom().contains(activeclient)) 
 			{
-				r.rmClientFromRoom(activeclient);
+				r.rmClientFromRoom(activeclient); 
 			}
 		}
 	}
@@ -177,7 +175,7 @@ public class Server
 		{
 			e.printStackTrace();
 		}
-		activeclient.st.writeMsg(activeclient.getClientsocket(), activeclient.getOut(), new Msg("","server",'C',clientsOnline));
+		activeclient.getSt().writeMsg(activeclient.getClientsocket(), activeclient.getOut(), new Msg("","server",'C',clientsOnline));
 	}
 	
 	/** 'R' */
@@ -200,6 +198,21 @@ public class Server
 		{
 			e.printStackTrace();
 		}
-		activeclient.st.writeMsg(activeclient.getClientsocket(), activeclient.getOut(), new Msg("","server",'R',existingRooms));
+		activeclient.getSt().writeMsg(activeclient.getClientsocket(), activeclient.getOut(), new Msg("","server",'R',existingRooms));
+	}
+	
+	/** ';' */
+	public void disconnect(ServerClient activeclient)
+	{
+		try {
+			leaveRoom(activeclient); // The Client needs to be away completely !
+			connectedClients.remove(activeclient);
+			activeclient.getSt().writeMsg(activeclient.getClientsocket(), activeclient.getOut(), new Msg("", "server", ';', null));
+			activeclient.getClientsocket().close();
+			System.out.println("is down");
+		} catch (IOException e)
+		{
+			e.printStackTrace();
+		}
 	}
 }
