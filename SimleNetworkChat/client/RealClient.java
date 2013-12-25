@@ -1,5 +1,7 @@
 package client;
 
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -28,11 +30,14 @@ public class RealClient
 	private ArrayList<String> otherClients;
 	private HashMap<String, ArrayList<String>> otherRooms;
 	private MessageGUI msgGUI;
+	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private int width = (int) screenSize.getWidth() / 3;
+	private int height = (int) (screenSize.getHeight() - screenSize.getHeight() / 3);
 
 	public RealClient(String ip, String p_nickname)
 	{
 		this.nickname = p_nickname;
-		msgGUI = new MessageGUI(nickname, 480, 500);
+		msgGUI = new MessageGUI(nickname, width, height);
 		connect(ip);
 
 		Thread readThread = new Thread()
