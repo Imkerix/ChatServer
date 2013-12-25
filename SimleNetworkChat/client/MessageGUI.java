@@ -6,6 +6,7 @@ import javax.swing.JTabbedPane;
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.Color;
+import java.awt.Toolkit;
 
 public class MessageGUI extends JFrame
 {
@@ -13,8 +14,11 @@ public class MessageGUI extends JFrame
 	private MessagePanel roomtabpanel;
 	private MessagePanel privatetabpanel;
 	private MessagePanel broadcasttabpanel;
+	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private int width = (int) screenSize.getWidth() / 3;
+	private int height = (int) (screenSize.getHeight() - screenSize.getHeight() / 3);
 
-	public MessageGUI(String nickname, int width, int height)
+	public MessageGUI(String nickname)
 	{
 		setTitle(nickname + " Messages");
 
