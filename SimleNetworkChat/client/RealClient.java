@@ -30,14 +30,12 @@ public class RealClient
 	private ArrayList<String> otherClients;
 	private HashMap<String, ArrayList<String>> otherRooms;
 	private MessageGUI msgGUI;
-	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-	private int width = (int) screenSize.getWidth() / 3;
-	private int height = (int) (screenSize.getHeight() - screenSize.getHeight() / 3);
+	
 
 	public RealClient(String ip, String p_nickname)
 	{
 		this.nickname = p_nickname;
-		msgGUI = new MessageGUI(nickname, width, height);
+		msgGUI = new MessageGUI(nickname);
 		connect(ip);
 
 		Thread readThread = new Thread()
