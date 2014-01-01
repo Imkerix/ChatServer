@@ -77,6 +77,8 @@ public class RealClient
 					}
 					if (nextCMD.getId() == ';')
 					{
+						msgGUI.getRoomtabpanel().addSystemMessage(nextCMD);
+						System.err.println(nextCMD.getContent() + " " + nextCMD.getId() + " " + nickname);
 						shutdown = true;
 					}
 				}

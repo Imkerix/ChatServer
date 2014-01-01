@@ -46,6 +46,18 @@ public class RealClientGUI extends JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(new Dimension(width, height));
 		setTitle("Client Chat");
+		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
+	        public void run() 
+	        {
+	        	if (client != null)
+				{
+	        		client.disconnect();
+					rp.removeAll();
+					rp.repaint();
+				}
+	        }
+	    }, "Shutdown-thread"));
+		
 		//// menubar
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
