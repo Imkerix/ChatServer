@@ -147,7 +147,7 @@ public class Server
 		leaving.rmClientFromRoom(activeclient); // leave needs to be before all get to know, because this client is already registered with its new entry at its new room.
 		for (Room r : rooms)
 		{
-			r.sendMovingClientInfo(activeclient, new Msg("moved|"+leaving.getName()+"|"+nextCMD.getContent(), activeclient.getNickname(), 'i', r.getName())); // everyone needs to know what is going on
+			r.roomBroadcast(activeclient, new Msg("moved|"+leaving.getName()+"|"+nextCMD.getContent(), activeclient.getNickname(), 'i', r.getName())); // everyone needs to know what is going on
 		}
 	}
 
@@ -164,7 +164,7 @@ public class Server
 		}
 		for (Room r : rooms)
 		{
-			r.sendMovingClientInfo(activeclient, new Msg("moved|"+leaving.getName()+"|null", activeclient.getNickname(), 'i', null)); // everyone needs to know what is going on
+			r.roomBroadcast(activeclient, new Msg("moved|"+leaving.getName()+"|null", activeclient.getNickname(), 'i', null)); // everyone needs to know what is going on
 		}
 		leaving.rmClientFromRoom(activeclient); // needs to leave behind sending otherwise the client would get no info about his leaving permission.
 	}
