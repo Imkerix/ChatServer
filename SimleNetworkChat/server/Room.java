@@ -24,23 +24,27 @@ public class Room
 
 	public void addClientToRoom(ServerClient sc)
 	{
-
-		for (ServerClient c : clientsInRoom) // nachricht an alle anderen im Raum, neuer typ da
+		if (!(clientsInRoom.contains(sc))) // gibt es den Typ
 		{
-			c.getSt().writeMsg(c.getClientsocket(), c.getOut(), new Msg(sc.getNickname() + " entered...", name, 'i', null));
-		}
-		clientsInRoom.add(sc);
+			sendMovingClientInfo(sc, new Msg(sc.getNickname()+" entered...", name, 'i', null));
+			clientsInRoom.add(sc);
+		}	
 	}
-
+	
 	public void rmClientFromRoom(ServerClient sc)
 	{
 		if (clientsInRoom.contains(sc)) // gibt es den Typ
 		{
 			clientsInRoom.remove(sc);
-			for (ServerClient c : clientsInRoom) // nachricht an alle anderen im Raum, typ weg
-			{
-				c.getSt().writeMsg(c.getClientsocket(), c.getOut(), new Msg(sc.getNickname() + " left...", name, 'i', null));
-			}
+			sendMovingClientInfo(sc, new Msg(sc.getNickname()+" left...", name, 'i', null));
+		}
+	}
+	
+	public void sendMovingClientInfo(ServerClient sc, Msg p_msg)
+	{
+		for (ServerClient c : clientsInRoom) // nachricht an alle anderen im Raum, neuer typ da
+		{
+			c.getSt().writeMsg(c.getClientsocket(), c.getOut(), p_msg);
 		}
 	}
 
