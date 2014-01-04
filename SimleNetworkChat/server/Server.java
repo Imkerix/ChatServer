@@ -132,29 +132,41 @@ public class Server
 	/** '+' */
 	private void enterRoom(ServerClient activeclient, Msg nextCMD)
 	{
+		Room leaving = new Room("null");
 		for (Room r : rooms)
 		{
 			if (r.getClientsInRoom().contains(activeclient)) // which room shell be left ?
 			{
-				r.rmClientFromRoom(activeclient); // leave
+				leaving = r;
 			}
 			if (r.getName().equals(nextCMD.getContent())) // which room shell be entered ?
 			{
 				r.addClientToRoom(activeclient); // enter
 			}
 		}
+		leaving.rmClientFromRoom(activeclient); // leave needs to be before all get to know, because this client is already registered with its new entry at its new room.
+		for (Room r : rooms)
+		{
+			r.sendMovingClientInfo(activeclient, new Msg("moved|"+leaving.getName()+"|"+nextCMD.getContent(), activeclient.getNickname(), 'i', r.getName())); // everyone needs to know what is going on
+		}
 	}
 
 	/** '-' */
 	private void leaveRoom(ServerClient activeclient)
 	{
+		Room leaving = new Room("null");
 		for (Room r : rooms)
 		{
 			if (r.getClientsInRoom().contains(activeclient))
 			{
-				r.rmClientFromRoom(activeclient);
+				leaving = r;
 			}
 		}
+		for (Room r : rooms)
+		{
+			r.sendMovingClientInfo(activeclient, new Msg("moved|"+leaving.getName()+"|null", activeclient.getNickname(), 'i', null)); // everyone needs to know what is going on
+		}
+		leaving.rmClientFromRoom(activeclient); // needs to leave behind sending otherwise the client would get no info about his leaving permission.
 	}
 
 	/** 'C' */
