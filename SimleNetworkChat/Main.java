@@ -13,7 +13,7 @@ public class Main
 
 		// // Server Part //////// Server Part //////// Server Part ////////
 		// Server Part ////
-
+//
 		Thread serverThread = new Thread()
 		{
 			public void run()
@@ -53,91 +53,99 @@ public class Main
 		
 		
 		RealClientGUI rcGUI = new RealClientGUI();
-		
-		
-		
-		Thread clientThread0 = new Thread() // A Client Thread
-		{
-			public void run()
-			{
-				RealClient c = new RealClient(ip,"nickname_0");
-				try {
-					this.sleep(5000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				c.roomBroadcast("Alle im raum ?", null);
-				try {
-					this.sleep(3000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				c.roomBroadcast("Da waren es noch 3", null);
-//				
-			}
-		};
-		clientThread0.start();
-		Thread clientThread1 = new Thread() // A Client Thread
-		{
-			public void run()
-			{
-				RealClient c = new RealClient(ip,"nickname_1");
-				try {
-					this.sleep(4000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				c.leaveRoom();
-				try {
-					this.sleep(2000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				c.enterRoom("Redeecke", null);
-			}
-		};
-		clientThread1.start();
-		Thread clientThread2 = new Thread() // A Client Thread
-		{
-			public void run()
-			{
-				RealClient c = new RealClient(ip,"nickname_2");
-				try {
-					this.sleep(7000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				c.enterRoom("Redeecke", null);
-				try {
-					this.sleep(1000);
-				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				c.roomBroadcast("nur wir zwei ^^", null);
-			}
-		};
-		clientThread2.start();
-//
-		Thread clientThread3 = new Thread() // A Client Thread
-		{
-			public void run()
-			{
-				RealClient c = new RealClient(ip,"nickname_3");
-//				c.updateRoomList();
-			}
-		};
-		clientThread3.start();
-
+//		
+//		
+//		
+//		Thread clientThread0 = new Thread() // A Client Thread
+//		{
+//			public void run()
+//			{
+//				RealClient c = new RealClient(ip,"nickname_0");
+//				try {
+//					this.sleep(5000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				c.roomBroadcast("Alle im raum ?", null);
+//				try {
+//					this.sleep(3000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				c.roomBroadcast("Da waren es noch 3", null);
+////				
+//			}
+//		};
+//		clientThread0.start();
+//		Thread clientThread1 = new Thread() // A Client Thread
+//		{
+//			public void run()
+//			{
+//				RealClient c = new RealClient(ip,"nickname_1");
+//				try {
+//					this.sleep(4000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				c.leaveRoom();
+//				try {
+//					this.sleep(2000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				c.enterRoom("Redeecke", null);
+//			}
+//		};
+//		clientThread1.start();
+//		Thread clientThread2 = new Thread() // A Client Thread
+//		{
+//			public void run()
+//			{
+//				RealClient c = new RealClient(ip,"nickname_2");
+//				try {
+//					this.sleep(7000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				c.enterRoom("Redeecke", null);
+//				try {
+//					this.sleep(1000);
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				c.roomBroadcast("nur wir zwei ^^", null);
+//			}
+//		};
+//		clientThread2.start();
+////
+//		Thread clientThread3 = new Thread() // A Client Thread
+//		{
+//			public void run()
+//			{
+//				RealClient c = new RealClient(ip,"nickname_3");
+////				c.updateRoomList();
+//			}
+//		};
+//		clientThread3.start();
+////
 		Thread clientThread4 = new Thread() // A Client Thread
 		{
 			public void run()
 			{
+				try
+				{
+					this.sleep(8000);
+				} catch (InterruptedException e)
+				{
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
 				RealClient c = new RealClient(ip,"nickname_4");
 				c.enterRoom("Redeecke", null);
 			}
