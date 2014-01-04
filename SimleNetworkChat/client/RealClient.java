@@ -8,6 +8,7 @@ import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import utility.Msg;
 import utility.StreamTools;
@@ -30,20 +31,30 @@ public class RealClient
 	private ArrayList<String> otherClients;
 	private HashMap<String, ArrayList<String>> otherRooms;
 	private MessageGUI msgGUI;
+	private Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+	private int width = (int) screenSize.getWidth() / 4;
+	private int height = (int) (screenSize.getHeight() - screenSize.getHeight() / 4);
+	private int roomPanelwidth = width - 30;
+	private RoomPanel rp;
+	
+
 	
 
 	public RealClient(String ip, String p_nickname)
 	{
 		this.nickname = p_nickname;
+		rp = new RoomPanel(roomPanelwidth);
 		msgGUI = new MessageGUI(nickname);
+		otherClients = new ArrayList<String>();
 		connect(ip);
-
-		Thread readThread = new Thread()
+		
+		
+		new Thread()
 		{
-
 			@SuppressWarnings("unchecked")
 			public void run()
 			{
+				
 				while (!shutdown)
 				{
 					Msg nextCMD = (Msg) st.readMsg(socket, in);
@@ -64,8 +75,45 @@ public class RealClient
 					}
 					if (nextCMD.getId() == 'i')
 					{
-						msgGUI.getRoomtabpanel().addSystemMessage(nextCMD);
-						System.err.println(nextCMD.getContent() + " " + nextCMD.getId() + " " + nickname);
+						// Keeps other clients up to date
+						String[] clientname = nextCMD.getContent().split("\\|");
+						if(clientname[0].startsWith("moved"))
+						{
+							for(Room r : getThis().getRp().getRooms())
+							{
+								if(!(clientname[1].equals("null")))	// leaving a room without entering somewhere else
+								{	
+									if(r.getName().equals(clientname[1])) // leaving
+									{
+										if(nextCMD.getSender().equals(getNickname())) // this client
+										{
+											r.leaveRoom();
+										}
+										else // not this client
+										{
+											r.rmGuyFromRoom(nextCMD.getSender());
+										}
+									}
+								}	
+								if(r.getName().equals(clientname[2])) // entering
+								{
+									if(nextCMD.getSender().equals(getNickname())) // this client
+									{
+										r.enterRoom();
+									}
+									else // not this client
+									{
+										r.addGuyToRoom(nextCMD.getSender());
+									}
+								}
+							}
+						}
+						else
+						{
+							msgGUI.getRoomtabpanel().addSystemMessage(nextCMD);	// create on screen messages
+						}
+						// Keeps other clients up to date
+						System.err.println((String)nextCMD.getObject()+"|"+nextCMD.getContent() + " " + nextCMD.getId() + " " + nickname);
 					}
 					if (nextCMD.getId() == 'C')
 					{
@@ -83,10 +131,45 @@ public class RealClient
 					}
 				}
 			}
-		};
-		readThread.start();
+		}.start();
+		updateRoomList(); // have to ask after the reading thread is running
+		rp = initRoomPanel(); 
 	}
 
+	public RoomPanel initRoomPanel()
+	{
+		HashMap<String, ArrayList<String>> rooms = this.getOtherRooms();
+		while (rooms == null)
+		{
+			rooms = this.getOtherRooms();
+			try
+			{
+				Thread.sleep(1);
+			} catch (InterruptedException e)
+			{
+				e.printStackTrace();
+			}
+		}
+
+		for (Entry<String, ArrayList<String>> pair : rooms.entrySet())
+		{
+			Object[] usersOfRoom = new Object[pair.getValue().size()]; // Liste mit activen useren im Raum der durch for läuft
+			boolean imThere = false;
+
+			for (int i = 0; i < pair.getValue().size(); i++)
+			{
+				usersOfRoom[i] = pair.getValue().get(i);
+				if (pair.getValue().get(i).equals(nickname))
+				{
+					imThere = true;
+				}
+			}
+
+			rp.addRoom(usersOfRoom, pair.getKey(), this, imThere);
+		}
+		return rp;
+	}
+	
 	public void broadcast(String s, Object o)
 	{
 		st.writeMsg(socket, out, new Msg(s, nickname, 'b', o));
@@ -136,6 +219,11 @@ public class RealClient
 	{
 		return nickname;
 	}
+	
+	public MessageGUI getMessageGUI()
+	{
+		return msgGUI;
+	}
 
 	public void connect(String ip)
 	{
@@ -155,5 +243,16 @@ public class RealClient
 	{
 		st.writeMsg(socket, out, new Msg("", nickname, ';', null));
 	}
+	
+	public RealClient getThis()
+	{
+		return this;
+	}
+
+	public RoomPanel getRp()
+	{
+		return rp;
+	}
+	
 
 }
