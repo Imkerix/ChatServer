@@ -46,6 +46,7 @@ public class RealClientGUI extends JFrame
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setSize(new Dimension(width, height));
 		setTitle("Client Chat");
+		setResizable(false);
 		Runtime.getRuntime().addShutdownHook(new Thread(new Runnable() {
 	        public void run() 
 	        {
@@ -77,42 +78,7 @@ public class RealClientGUI extends JFrame
 					if (nickname != null)
 					{
 						client = new RealClient(ip, nickname);
-
-						client.updateRoomList();
-
-						HashMap<String, ArrayList<String>> rooms = client.getOtherRooms();
-						while (rooms == null)
-						{
-							rooms = client.getOtherRooms();
-							try
-							{
-								Thread.sleep(1);
-							} catch (InterruptedException e)
-							{
-								e.printStackTrace();
-							}
-						}
-
-						for (Entry<String, ArrayList<String>> pair : rooms.entrySet())
-						{
-							Object[] usersOfRoom = new Object[pair.getValue().size()]; // Liste mit activen useren im Raum der durch for läuft
-							boolean imThere = false;
-
-							for (int i = 0; i < pair.getValue().size(); i++)
-							{
-								usersOfRoom[i] = pair.getValue().get(i);
-								if (pair.getValue().get(i).equals(nickname))
-								{
-									imThere = true;
-								}
-							}
-
-							rp.addRoomPanel(usersOfRoom, pair.getKey(), client, imThere);
-						}
-						for (int i = 0; i < 200; i++)
-						{
-							rp.addRoomPanel(new Object[] { "Ursula", "Clementine", "Simselbär", "Fuchs", "Gurkenschäler" }, "Some badass Room", client, false);
-						}
+						rp = client.getRp(); // now the rooppanel of client is in use
 						// no need to set arp preferedsize here, because it was
 						// determinated in AllRoomPanel this or the other way
 						// around
@@ -145,7 +111,7 @@ public class RealClientGUI extends JFrame
 		sc.getVerticalScrollBar().setUnitIncrement(20); // helps to scroll faster when using the mouse.
 		this.getContentPane().add(sc);
 
-		rp = new RoomPanel(roomPanelwidth);
+		rp = new RoomPanel(roomPanelwidth); // Dummy implementation to keep space
 		//// ScrollPane
 		//// The part where you send messages ////
 		JPanel writepanel = new JPanel();
@@ -227,22 +193,122 @@ public class RealClientGUI extends JFrame
 		this.getRootPane().setDefaultButton(btnNewButton); // If nothing else is selected enter hits the send button
 		btnNewButton.addActionListener(new ActionListener()
 		{
-			public void actionPerformed(ActionEvent arg0)
+			public void actionPerformed(ActionEvent arg0) // error messages do never touch again a break is to expect.
 			{
-				if (tglbtnRoom.isSelected())
+				if (client != null)
 				{
-					client.roomBroadcast(textArea.getText(), null);
-				}
-				if (tglbtnPrivate.isSelected())
-				{
-					for (Room arp : rp.getRooms())
+					if (!(textArea.getText().equals("")))
 					{
-						client.secredMessage(textArea.getText(), (String) arp.getSelected());
+						if (tglbtnRoom.isSelected())
+						{
+							client.roomBroadcast(textArea.getText(), null);
+						}
+						if (tglbtnPrivate.isSelected())
+						{
+							for (Room arp : rp.getRooms())
+							{
+								if (arp.getSelected() != null)
+								{
+									client.secredMessage(textArea.getText(), (String) arp.getSelected());
+								} else
+								{
+									new Thread()
+									{
+										public void run()
+										{
+											String before = lblWhereTo.getText();
+											try
+											{
+												this.sleep(10);
+											} catch (InterruptedException e)
+											{
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+											lblWhereTo.setText("No user was selected, no message was sended");
+
+											try
+											{
+												this.sleep(1500);
+											} catch (InterruptedException e)
+											{
+												// TODO Auto-generated catch block
+												e.printStackTrace();
+											}
+
+											lblWhereTo.setText(before);
+
+										}
+									}.start();
+								}
+							}
+						}
+						if (tglbtnBroadcast.isSelected())
+						{
+							client.broadcast(textArea.getText(), null);
+						}
+					} else
+					{
+						new Thread()
+						{
+							public void run()
+							{
+								String before = lblWhereTo.getText();
+								try
+								{
+									this.sleep(10);
+								} catch (InterruptedException e)
+								{
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+								lblWhereTo.setText("Nothing to send, no message was sended");
+
+								try
+								{
+									this.sleep(1500);
+								} catch (InterruptedException e)
+								{
+									// TODO Auto-generated catch block
+									e.printStackTrace();
+								}
+
+								lblWhereTo.setText(before);
+
+							}
+						}.start();
 					}
 				}
-				if (tglbtnBroadcast.isSelected())
+				else
 				{
-					client.broadcast(textArea.getText(), null);
+					new Thread()
+					{
+						public void run()
+						{
+							String before = lblWhereTo.getText();
+							try
+							{
+								this.sleep(10);
+							} catch (InterruptedException e)
+							{
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+							lblWhereTo.setText("Not connected to a Server");
+
+							try
+							{
+								this.sleep(1500);
+							} catch (InterruptedException e)
+							{
+								// TODO Auto-generated catch block
+								e.printStackTrace();
+							}
+
+							lblWhereTo.setText(before);
+
+						}
+					}.start();
 				}
 			}
 		});
