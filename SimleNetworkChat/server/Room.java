@@ -26,7 +26,7 @@ public class Room
 	{
 		if (!(clientsInRoom.contains(sc))) // gibt es den Typ
 		{
-			sendMovingClientInfo(sc, new Msg(sc.getNickname()+" entered...", name, 'i', null));
+			roomBroadcast(sc, new Msg(sc.getNickname()+" entered...", name, 'i', null));
 			clientsInRoom.add(sc);
 		}	
 	}
@@ -36,18 +36,10 @@ public class Room
 		if (clientsInRoom.contains(sc)) // gibt es den Typ
 		{
 			clientsInRoom.remove(sc);
-			sendMovingClientInfo(sc, new Msg(sc.getNickname()+" left...", name, 'i', null));
+			roomBroadcast(sc, new Msg(sc.getNickname()+" left...", name, 'i', null));
 		}
 	}
 	
-	public void sendMovingClientInfo(ServerClient sc, Msg p_msg)
-	{
-		for (ServerClient c : clientsInRoom) // nachricht an alle anderen im Raum, neuer typ da
-		{
-			c.getSt().writeMsg(c.getClientsocket(), c.getOut(), p_msg);
-		}
-	}
-
 	public String getName()
 	{
 		return name;
