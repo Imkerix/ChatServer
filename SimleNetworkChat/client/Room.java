@@ -3,6 +3,8 @@ package client;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.DefaultListModel;
 import javax.swing.DefaultListSelectionModel;
@@ -49,6 +51,19 @@ public class Room extends JPanel
 		menuBar.add(sep);
 
 		btnMoveaction = new JButton();
+		btnMoveaction.addActionListener(new ActionListener()
+		{
+			public void actionPerformed(ActionEvent arg0)
+			{
+				if (btnMoveaction.getText().equals("Enter"))  //This just calls commands the intelligence is in the server, he knows his "papenheimer" clients best.
+				{
+					client.enterRoom(name,null);
+				} else
+				{
+					client.leaveRoom();
+				}
+			}
+		});
 
 		if (p_in)// // If you are in the room you only can leave.
 		{
@@ -61,9 +76,12 @@ public class Room extends JPanel
 		menuBar.add(btnMoveaction);
 
 		listModel = new DefaultListModel();
-		for (Object o : p_data)
+		if(p_data != null)
 		{
-			listModel.addElement(o);
+			for (Object o : p_data)
+			{
+				listModel.addElement(o);
+			}
 		}
 		list = new JList<Object>(listModel);
 		list.addListSelectionListener(new ListSelectionListener()
@@ -116,19 +134,42 @@ public class Room extends JPanel
 
 	public void leaveRoom()
 	{
-		client.leaveRoom();
-		setLeaved();
-		listModel.removeElement(client.getNickname());
-		this.setPreferredSize(new Dimension(width, list.getPreferredSize().height + menuBar.getPreferredSize().height));
+		if(listModel.contains(client.getNickname())) // wenn schon in liste
+		{
+			setLeaved();
+			listModel.removeElement(client.getNickname());
+			this.setPreferredSize(new Dimension(width, list.getPreferredSize().height + menuBar.getPreferredSize().height));
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void enterRoom()
 	{
-		client.enterRoom(name, null);
-		setEntered();
-		listModel.addElement(client.getNickname());
-		this.setPreferredSize(new Dimension(width, list.getPreferredSize().height + menuBar.getPreferredSize().height));
+		if(!(listModel.contains(client.getNickname()))) // wenn noch nicht in liste
+		{
+			setEntered();
+			listModel.addElement(client.getNickname());
+			this.setPreferredSize(new Dimension(width, list.getPreferredSize().height + menuBar.getPreferredSize().height));
+		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public void addGuyToRoom(String p_nickname)
+	{
+		if(!(listModel.contains(p_nickname))) // wenn noch nicht in liste
+		{
+			listModel.addElement(p_nickname);
+			this.setPreferredSize(new Dimension(width, list.getPreferredSize().height + menuBar.getPreferredSize().height));
+		}
+	}
+	
+	public void rmGuyFromRoom(String p_nickname)
+	{
+		if(listModel.contains(p_nickname)) // wenn schon in liste
+		{
+			listModel.removeElement(p_nickname);
+			this.setPreferredSize(new Dimension(width, list.getPreferredSize().height + menuBar.getPreferredSize().height));
+		}
 	}
 
 	public void setLeaved()
@@ -189,5 +230,10 @@ public class Room extends JPanel
 	public JList getList()
 	{
 		return list;
+	}
+	
+	public String getName()
+	{
+		return name;
 	}
 }
