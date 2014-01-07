@@ -25,6 +25,7 @@ public class RoomPanel extends JPanel
 		roompanels.add(room);
 		this.add(room);
 		mkPreferredSize();
+
 	}
 
 //	public void rmRoom(int componentIndexToDelete) // could be usefull some day
