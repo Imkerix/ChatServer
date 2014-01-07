@@ -139,6 +139,7 @@ public class Room extends JPanel
 			setLeaved();
 			listModel.removeElement(client.getNickname());
 			this.setPreferredSize(new Dimension(width, list.getPreferredSize().height + menuBar.getPreferredSize().height));
+//			revalidate();
 		}
 	}
 
@@ -150,6 +151,7 @@ public class Room extends JPanel
 			setEntered();
 			listModel.addElement(client.getNickname());
 			this.setPreferredSize(new Dimension(width, list.getPreferredSize().height + menuBar.getPreferredSize().height));
+//			revalidate();
 		}
 	}
 	
@@ -159,7 +161,9 @@ public class Room extends JPanel
 		if(!(listModel.contains(p_nickname))) // wenn noch nicht in liste
 		{
 			listModel.addElement(p_nickname);
-			this.setPreferredSize(new Dimension(width, list.getPreferredSize().height + menuBar.getPreferredSize().height));
+			setPreferredSize(new Dimension(width ,list.getPreferredSize().height + menuBar.getPreferredSize().height));
+			repaint();
+			revalidate();
 		}
 	}
 	
@@ -169,6 +173,7 @@ public class Room extends JPanel
 		{
 			listModel.removeElement(p_nickname);
 			this.setPreferredSize(new Dimension(width, list.getPreferredSize().height + menuBar.getPreferredSize().height));
+//			revalidate();
 		}
 	}
 
