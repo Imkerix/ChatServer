@@ -35,7 +35,7 @@ public class Server
 					try
 					{
 						connectedClients.add(this); // this is a SocketThread
-						rooms[0].addClientToRoom(this); // Spawnroom // this is a SocketThread
+						enterRoom(this, new Msg("Spawnroom", this.getNickname(), '+', null)); // Spawnroom // this is a SocketThread
 						protokol(this); // this is a SocketThread
 					} catch (IOException e)
 					{
