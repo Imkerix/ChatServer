@@ -134,23 +134,23 @@ public class Main
 //		};
 //		clientThread3.start();
 ////
-		Thread clientThread4 = new Thread() // A Client Thread
-		{
-			public void run()
-			{
-				try
-				{
-					this.sleep(8000);
-				} catch (InterruptedException e)
-				{
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				RealClient c = new RealClient(ip,"nickname_4");
-				c.enterRoom("Redeecke", null);
-			}
-		};
-		clientThread4.start();
+//		Thread clientThread4 = new Thread() // A Client Thread
+//		{
+//			public void run()
+//			{
+//				try
+//				{
+//					this.sleep(8000);
+//				} catch (InterruptedException e)
+//				{
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				RealClient c = new RealClient(ip,"nickname_4");
+//				c.enterRoom("Redeecke", null);
+//			}
+//		};
+//		clientThread4.start();
 
 		// // Client Part //////// Client Part //////// Client Part ////////
 		// Client Part ////
